@@ -1,0 +1,83 @@
+services:
+  # Temporal Server
+  temporal:
+    image: temporalio/auto-setup:1.22.3
+    ports:
+      - "7233:7233"
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+    depends_on:
+      - postgresql
+    networks:
+      - platformatory-network
+
+  # PostgreSQL for Temporal
+  postgresql:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+      POSTGRES_DB: temporal
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    networks:
+      - platformatory-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=development
+      - SESSION_SECRET=platformatory-labs-super-secret-session-key-2024
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - DATABASE_PATH=${DATABASE_PATH}
+      - TEMPORAL_HOST=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - CRUDCRUD_API_URL=${CRUDCRUD_API_URL}
+      - CRUDCRUD_API_KEY=${CRUDCRUD_API_KEY}
+      - FRONTEND_URL=${FRONTEND_URL}
+    volumes:
+      - ./backend/data:/app/data
+    depends_on:
+      - temporal
+    networks:
+      - platformatory-network
+    restart: unless-stopped
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:3001/api
+    depends_on:
+      - backend
+    networks:
+      - platformatory-network
+    restart: unless-stopped
+
+volumes:
+  postgresql-data:
+
+networks:
+  platformatory-network:
+    driver: bridge

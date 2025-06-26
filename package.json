@@ -1,0 +1,58 @@
+{
+  "name": "platformatory-labs",
+  "version": "1.0.0",
+  "description": "Platformatory Labs Interview Task - Full-stack app with OIDC, Temporal workflows, and modern UI",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:build": "docker-compose build",
+    "docker:restart": "docker-compose restart",
+    "clean": "rm -rf node_modules backend/node_modules frontend/node_modules backend/dist frontend/dist",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "start": "docker-compose up -d"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prettier": "^3.1.0"
+  },
+  "keywords": [
+    "platformatory",
+    "interview",
+    "fullstack",
+    "oidc",
+    "temporal",
+    "react",
+    "express",
+    "typescript",
+    "docker"
+  ],
+  "author": "Platformatory Labs",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/platformatory-labs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/platformatory-labs/issues"
+  },
+  "homepage": "https://github.com/yourusername/platformatory-labs#readme"
+} 
